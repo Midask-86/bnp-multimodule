@@ -9,6 +9,9 @@ pipeline {
             agent any
             steps {
                 sh 'mvn -Dmaven.test.failure.ignore=true clean package'
+                dir('/application/target') {
+                    stash includes: '*.jar', name: 'app'
+                }        
             }
             post {
                 // If Maven was able to run the tests, even if some of the test
@@ -16,7 +19,7 @@ pipeline {
                 success {
                     junit '**/target/surefire-reports/TEST-*.xml'
                     archiveArtifacts '**/target/*.jar'
-                    stash includes: '**/application/target/*.jar', name: 'app'                }
+                    }
             }
              
         }
@@ -60,7 +63,7 @@ SONAR_TOKEN = credentials('SONAR_TOKEN')
             steps {
                 echo "Déploiement intégration vers $DATACENTER"
                 unstash 'app'
-                sh 'cp *.jar ./$DATACENTER/'
+                sh 'cp *.jar /home/plb/MyWork/$DATACENTER.jar'
             }
         }
 
