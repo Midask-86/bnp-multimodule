@@ -59,7 +59,7 @@ SONAR_TOKEN = credentials('SONAR_TOKEN')
                 echo "Déploiement intégration vers $DATACENTER"
                 unstash 'app'
                 sh 'mkdir $DATACENTER'
-                sh 'cp $app $DATACENTER'
+                sh 'cp *.jar ./$DATACENTER/'
             }
         }
 
