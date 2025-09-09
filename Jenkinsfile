@@ -31,9 +31,7 @@ pipeline {
             
                  stage('Analyse Sonar') {
                     environment {
-NEXUS_CREDENTIALS = credentials('jenkins_nexus')
-NEXUS_USER = "${env.NEXUS_CREDENTIALS_USR}"
-NEXUS_PASS = "${env.NEXUS_CREDENTIALS_PSW}"
+SONAR_TOKEN = credentials('SONAR_TOKEN')
 }
                      steps {
                         echo 'Analyse sonar'
@@ -46,10 +44,16 @@ NEXUS_PASS = "${env.NEXUS_CREDENTIALS_PSW}"
         }
             
         stage('Déploiement intégration') {
-
+            input {
+  message 'Dans quel Data Center, voulez-vous déployer l’artefact ?'
+  id 'choixDC'
+  ok 'Go !'
+  parameters {
+    choice choices: ['Paris', 'Lille', 'Lyon'], name: 'choixdc'
+  }
+}
             steps {
                 echo "Déploiement intégration"
-                
             }
         }
 
