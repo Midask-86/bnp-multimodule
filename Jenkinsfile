@@ -21,10 +21,8 @@ pipeline {
              
         }
         stage('Analyse qualité et vulnérabilités') {
-            agent any
             parallel {
                 stage('Vulnérabilités') {
-                    agent any
                     steps {
                         echo 'Tests de Vulnérabilités OWASP'
                     }
@@ -33,7 +31,6 @@ pipeline {
 
             
                  stage('Analyse Sonar') {
-                    agent any
                     environment {
 SONAR_TOKEN = credentials('SONAR_TOKEN')
 }
