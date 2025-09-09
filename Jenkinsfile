@@ -26,6 +26,7 @@ pipeline {
         stage('Analyse qualité et vulnérabilités') {
             parallel {
                 stage('Vulnérabilités') {
+                    agent any
                     steps {
                         echo 'Tests de Vulnérabilités OWASP'
                         sh 'mvn -Dnvd.api.key=311a727c-b9e3-4932-be4f-e3f2651de65c -DskipTests -Dformats=XML verify'
@@ -36,6 +37,7 @@ pipeline {
 
             
                  stage('Analyse Sonar') {
+                    agent any
                     environment {
 SONAR_TOKEN = credentials('SONAR_TOKEN')
 }
