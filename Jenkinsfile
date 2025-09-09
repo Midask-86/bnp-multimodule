@@ -28,13 +28,13 @@ pipeline {
                     
                 }
 
-                environment {
+            
+                 stage('Analyse Sonar') {
+                    environment {
 NEXUS_CREDENTIALS = credentials('jenkins_nexus')
 NEXUS_USER = "${env.NEXUS_CREDENTIALS_USR}"
 NEXUS_PASS = "${env.NEXUS_CREDENTIALS_PSW}"
 }
-
-                 stage('Analyse Sonar') {
                      steps {
                         echo 'Analyse sonar'
                         sh 'mvn -Dsonar.token=${SONAR_TOKEN} clean integration-test sonar:sonar'
