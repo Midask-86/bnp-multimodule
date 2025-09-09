@@ -16,7 +16,7 @@ pipeline {
                 success {
                     junit '**/target/surefire-reports/TEST-*.xml'
                     archiveArtifacts '**/target/*.jar'
-                }
+                    stash includes: '**/application/target/*.jar', name: 'app'                }
             }
              
         }
@@ -56,7 +56,10 @@ SONAR_TOKEN = credentials('SONAR_TOKEN')
 
 
             steps {
-                echo "Déploiement intégration"
+                echo "Déploiement intégration vers $DATACENTER"
+                unstash 'app'
+                sh 'mkdir $DATACENTER'
+                sh 'cp $app $DATACENTER'
             }
         }
 
