@@ -62,10 +62,10 @@ pipeline {
             //}
 
             steps {
-                echo "Déploiement intégration vers $DATACENTER"
+                echo "Déploiement intégration"
                 unstash 'app'
                 script {
-                   def allDC = readJSON file: '/home/plb/MyWork/deployment.json'
+                   def allDC = readJSON file: 'deployment.json'
                    def listdatacenters = allDC.dataCenters
                     for (def datacenter in listdatacenters){
                         sh 'cp *.jar ${allDC.integrationURL}/${datacenter}.jar'
