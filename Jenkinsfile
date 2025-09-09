@@ -50,9 +50,10 @@ SONAR_TOKEN = credentials('SONAR_TOKEN')
   message 'Dans quel Data Center, voulez-vous déployer l’artefact ?'
   ok 'Déployer'
   parameters {
-    choice choices: ['Paris', 'Lille', 'Lyon'], name: 'choixdc'
+    choice choices: ['Paris', 'Lille', 'Lyon'], name: 'DATACENTER'
   }
 }
+
 
             steps {
                 echo "Déploiement intégration"
