@@ -53,9 +53,16 @@ SONAR_TOKEN = credentials('SONAR_TOKEN')
             
         stage('Déploiement intégration') {
             agent none
+            script{
+            def allDC = readJSON file: '/home/plb/MyWork/deployment.json'
+            def listdatacenters = allDC.dataCenters
+            for (def datacenter in listdatacenters)
+                sh 'cp *.jar ${allDC.integrationURL}/${datacenter}.jar'
+            }
+
         input {
-  message 'Dans quel Data Center, voulez-vous déployer l’artefact ?'
-  ok 'Déployer'
+        message 'Dans quel Data Center, voulez-vous déployer l’artefact ?'
+        ok 'Déployer'
   parameters {
     choice choices: ['Paris', 'Lille', 'Lyon'], name: 'DATACENTER'
   }
