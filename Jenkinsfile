@@ -6,6 +6,7 @@ pipeline {
     }
     stages {
         stage('Compile et tests') {
+            agent any
             steps {
                 sh 'mvn -Dmaven.test.failure.ignore=true clean package'
             }
@@ -20,8 +21,10 @@ pipeline {
              
         }
         stage('Analyse qualité et vulnérabilités') {
+            agent any
             parallel {
                 stage('Vulnérabilités') {
+                    agent any
                     steps {
                         echo 'Tests de Vulnérabilités OWASP'
                     }
@@ -30,6 +33,7 @@ pipeline {
 
             
                  stage('Analyse Sonar') {
+                    agent any
                     environment {
 SONAR_TOKEN = credentials('SONAR_TOKEN')
 }
@@ -44,6 +48,7 @@ SONAR_TOKEN = credentials('SONAR_TOKEN')
         }
             
         stage('Déploiement intégration') {
+            agent none
         input {
   message 'Dans quel Data Center, voulez-vous déployer l’artefact ?'
   id 'Dans quel Data Center, voulez-vous déployer l’artefact ?'
