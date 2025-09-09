@@ -68,7 +68,7 @@ pipeline {
                    def allDC = readJSON file: 'deployment.json'
                    def listdatacenters = allDC.dataCenters
                     for (def datacenter in listdatacenters){
-                        sh 'cp *.jar ${allDC.integrationURL}/${datacenter}.jar'
+                        sh "cp *.jar ${allDC.integrationURL}/${datacenter}.jar"
                     }
                     }
             }
