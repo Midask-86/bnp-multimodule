@@ -46,7 +46,7 @@ SONAR_TOKEN = credentials('SONAR_TOKEN')
         stage('Déploiement intégration') {
             input {
   message 'Dans quel Data Center, voulez-vous déployer l’artefact ?'
-  id 'choixDC'
+  id 'Dans quel Data Center, voulez-vous déployer l’artefact ?'
   ok 'Go !'
   parameters {
     choice choices: ['Paris', 'Lille', 'Lyon'], name: 'choixdc'
