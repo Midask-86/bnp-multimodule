@@ -1,8 +1,7 @@
 pipeline {
    agent any 
-    
     tools {
-  maven 'MAVEN3'
+        maven 'MAVEN3'
     }
     stages {
         stage('Compile et tests') {
@@ -23,6 +22,7 @@ pipeline {
             }
              
         }
+
         stage('Analyse qualité et vulnérabilités') {
             parallel {
                 stage('Vulnérabilités') {
@@ -39,8 +39,8 @@ pipeline {
                  stage('Analyse Sonar') {
                     agent any
                     environment {
-SONAR_TOKEN = credentials('SONAR_TOKEN')
-}
+                        SONAR_TOKEN = credentials('SONAR_TOKEN')
+                    }
                      steps {
                         echo 'Analyse sonar'
                         sh 'mvn -Dsonar.token=${SONAR_TOKEN} clean integration-test sonar:sonar'
@@ -53,14 +53,13 @@ SONAR_TOKEN = credentials('SONAR_TOKEN')
             
         stage('Déploiement intégration') {
             agent none
-        input {
-  message 'Dans quel Data Center, voulez-vous déployer l’artefact ?'
-  ok 'Déployer'
-  parameters {
-    choice choices: ['Paris', 'Lille', 'Lyon'], name: 'DATACENTER'
-  }
-}
-
+            input {
+                message 'Dans quel Data Center, voulez-vous déployer l’artefact ?'
+                ok 'Déployer'
+                parameters {
+                    choice choices: ['Paris', 'Lille', 'Lyon'], name: 'DATACENTER'
+                }
+            }
 
             steps {
                 echo "Déploiement intégration vers $DATACENTER"
@@ -69,6 +68,5 @@ SONAR_TOKEN = credentials('SONAR_TOKEN')
             }
         }
 
-     }
-    
+     } 
 }
