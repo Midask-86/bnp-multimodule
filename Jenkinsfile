@@ -1,13 +1,18 @@
 @Library('formationLibrary') _
 
 pipeline {
-   agent any 
+   agent none 
     tools {
         maven 'MAVEN3'
     }
     stages {
         stage('Compile et tests') {
-            agent any
+            agent {
+                docker { 
+                    image 'maven3:open-jdk-17'
+                    args '-v $HOME/.m2:root/.m2'
+                    }
+            }
             steps {
                 sh 'mvn -Dmaven.test.failure.ignore=true clean package'
                 tarGz sourceDir: 'application', extensions: ['java'], outputDir: 'dist'
