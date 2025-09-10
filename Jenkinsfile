@@ -1,6 +1,7 @@
-@Library('formationLibrary')
+@Library('formationLibrary') _
+
 
 standardPipeline {
-    projetName = 'multi-module'
-    serverDomain = 'www.formations.org'
+    projectName = 'multi-module'
+    serverDomain = 'multi-module.formations.org'
 }
