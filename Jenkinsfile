@@ -1,10 +1,9 @@
-@Library('formationLibrary') _
+def integrationURL
+def dataCenters
 
 pipeline {
    agent none 
-    tools {
-        maven 'MAVEN3'
-    }
+ 
     stages {
         stage('Compile et tests') {
             agent {
@@ -13,94 +12,33 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn -Dmaven.test.failure.ignore=true clean package'
-                tarGz sourceDir: 'application', extensions: ['java'], outputDir: 'dist'
-                dir('application/target') {
-                    stash includes: '*.jar', name: 'app'
-                }        
+                container(name: 'maven') {
+                    echo 'Unit test et packaging'
+                    sh 'mvn -Dmaven.test.failure.ignore=true clean package'
+                    dir('application/target') {
+                        stash includes: '*.jar', name: 'app'
+                    }
+                }
             }
             post {
-                // If Maven was able to run the tests, even if some of the test
-                // failed, record the test results and archive the jar file.
+                always {
+                    // One or more steps need to be included within each condition's block.
+                    junit '**/target/surefire-reports/*.xml'
+                }
                 success {
-                    junit '**/target/surefire-reports/TEST-*.xml'
-                    archiveArtifacts '**/target/*.jar'
-                    }
+                    // One or more steps need to be included within each condition's block.
+                    archiveArtifacts artifacts: '**/target/*.jar', followSymlinks: false
+                }
+                unsuccessful {
+                    // One or more steps need to be included within each condition's block.
+                    mail bcc: '', body: 'Please connect to jenkins to see what has happenned !', cc: '', from: '', replyTo: '', subject: 'Build has a problem', to: 'david.thibau@gmail.com'
+                }
             }
+
              
         }
-
-        stage('Analyse qualité et vulnérabilités') {
-            parallel {
-                stage('Vulnérabilités') {
-                    agent any
-                    steps {
-                        echo 'Tests de Vulnérabilités OWASP'
-                        sh 'mvn -Dnvd.api.key=311a727c-b9e3-4932-be4f-e3f2651de65c -DskipTests -Dformats=XML verify'
-                        dependencyCheckPublisher pattern: '**/target/dependency-check-report.xml'
-                    }
-                    
-                }
-
-            
-                 stage('Analyse Sonar') {
-                    agent any
-                    environment {
-                        SONAR_TOKEN = credentials('SONAR_TOKEN')
-                    }
-                     steps {
-                        echo 'Analyse sonar'
-                        sh 'mvn -Dsonar.token=${SONAR_TOKEN} clean integration-test sonar:sonar'
-                        script {
-                            checkSonarQualityGate()
-                        }
-
-                     }
-                    
-                }
-            }
-            
-        }
-
-        stage ('Déploiement DockerHub') {
-            agent any
-            steps {
-                echo 'Déploiement sur DockerHub'
-                unstash 'app'
-                script {
-                    def dockerImage = docker.build("midask/multi-module", ".")
-                    docker.withRegistry('https://registry.hub.docker.com', 'midask_docker') {
-                        dockerImage.push "${BRANCH_NAME}"
-                    }        
-                }
-            }
-        }  
-
-            
-        stage('Déploiement intégration') {
-            agent any
-            //input {
-            //    message 'Dans quel Data Center, voulez-vous déployer l’artefact ?'
-            //    ok 'Déployer'
-                //parameters {
-                //    choice choices: ['Paris', 'Lille', 'Lyon'], name: 'DATACENTER'
-                //}
-            //}
-
-            steps {
-                echo "Déploiement intégration"
-                unstash 'app'
-                script {
-                   def allDC = readJSON file: 'deployment.json'
-                   def listdatacenters = allDC.dataCenters
-                    for (def datacenter in listdatacenters){
-                        sh "cp *.jar ${allDC.integrationURL}/${datacenter}.jar"
-                    }
-                    }
-            }
-        }
-
-     } 
+       
+    }
 }
 
 def checkSonarQualityGate(){
