@@ -64,7 +64,7 @@ pipeline {
         }
             
         stage('Déploiement intégration') {
-            agent none
+            agent any
             //input {
             //    message 'Dans quel Data Center, voulez-vous déployer l’artefact ?'
             //    ok 'Déployer'
