@@ -8,6 +8,7 @@ pipeline {
             agent any
             steps {
                 sh 'mvn -Dmaven.test.failure.ignore=true clean package'
+                tarGz sourceDir: 'application', extensions: ['*.java'], outputDir: 'dist'
                 dir('application/target') {
                     stash includes: '*.jar', name: 'app'
                 }        
