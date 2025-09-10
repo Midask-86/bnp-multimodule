@@ -62,6 +62,22 @@ pipeline {
             }
             
         }
+
+        stage ('Déploiement DockerHub') {
+            agent any
+            steps {
+                echo 'Déploiement sur DockerHub'
+                unstash 'app'
+                script {
+                    def dockerImage = docker.build("midask/multi-module", ".")
+                    docker.withRegistry('https://registry.hub.docker.com', 'midask_docker') {
+                        dockerImage.push "${BRANCH_NAME}"
+                    }        
+                }
+            }
+
+        }  
+
             
         stage('Déploiement intégration') {
             agent any
