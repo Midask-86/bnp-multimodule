@@ -9,7 +9,7 @@ pipeline {
         stage('Compile et tests') {
             agent {
                 docker { 
-                    image 'maven3:open-jdk-17'
+                    image 'maven:3-openjdk-17'
                     args '-v $HOME/.m2:root/.m2'
                     }
             }
