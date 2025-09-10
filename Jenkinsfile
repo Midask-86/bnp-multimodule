@@ -8,10 +8,9 @@ pipeline {
     stages {
         stage('Compile et tests') {
             agent {
-                docker { 
-                    image 'maven:3-openjdk-17'
-                    args '-v $HOME/.m2:/root/.m2'
-                    }
+                kubernetes {
+                    inheritFrom 'maven-agent'
+                }
             }
             steps {
                 sh 'mvn -Dmaven.test.failure.ignore=true clean package'
@@ -75,7 +74,6 @@ pipeline {
                     }        
                 }
             }
-
         }  
 
             
