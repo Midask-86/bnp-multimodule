@@ -42,8 +42,6 @@ pipeline {
                     
         }
             
-        }
-            
         stage('Déploiement intégration') {
             agent none
             //input {
@@ -63,12 +61,11 @@ pipeline {
                     for (def datacenter in listdatacenters){
                         sh "cp *.jar ${allDC.integrationURL}/${datacenter}.jar"
                     }
-                    }
+                }
             }
         }
-
-     } 
-}
+    }    
+} 
 
 def checkSonarQualityGate(){
     // Get properties from report file to call SonarQube 
