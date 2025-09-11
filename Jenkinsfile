@@ -37,7 +37,11 @@ pipeline {
 
             
                  stage('Analyse Sonar') {
-                    agent any
+                    agent {
+                        kubernetes {
+                            inheritFrom 'maven-agent'
+                        }
+                    }
                     environment {
                         SONAR_TOKEN = credentials('SONAR_TOKEN')
                     }
