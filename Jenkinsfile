@@ -12,7 +12,7 @@ pipeline {
                 }
             }
             environment {
-                SONAR_TOKEN = credentials('SONAR_TOKEN')
+                withSonarQubeEnv('SONAR')
             }
             steps {
                 echo 'Analyse sonar'
