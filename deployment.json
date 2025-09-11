@@ -1,4 +1,4 @@
 {
- "integrationURL": '/home/plb/MyWork',
+ "integrationURL": '/usr/src',
  "dataCenters": ['Nancy','Strasbourg']
 }
