@@ -38,7 +38,7 @@ pipeline {
                 stage('Analyse Sonar') {
                     agent {
                         kubernetes {
-                            yamlFile 'kubernetesPod.yaml'
+                            yamlFile 'kubernetesPod.yml'
                         }
                     }
                     steps {
