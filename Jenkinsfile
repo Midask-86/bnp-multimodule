@@ -13,11 +13,10 @@ pipeline {
             }
             environment {
                 SONAR_TOKEN = credentials('SONAR_TOKEN')
-                SONAR_URL = "http://sonarqube-service.devops-tools.svc.cluster.local:9000"
             }
             steps {
                 echo 'Analyse sonar'
-                sh 'mvn -Dsonar.token=${SONAR_TOKEN} -Dsonar.url=${SONAR_URL} clean integration-test sonar:sonar'
+                sh 'mvn -Dsonar.token=${SONAR_TOKEN} clean integration-test sonar:sonar'
                 script {
                     checkSonarQualityGate()
                 }
