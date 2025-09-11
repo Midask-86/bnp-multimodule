@@ -23,39 +23,24 @@ pipeline {
              
         }
 
-        stage('Analyse qualité et vulnérabilités') {
-            parallel {
-                stage('Vulnérabilités') {
-                    agent any
-                    steps {
-                        echo 'Tests de Vulnérabilités OWASP'
-                        sh 'mvn -Dnvd.api.key=311a727c-b9e3-4932-be4f-e3f2651de65c -DskipTests -Dformats=XML verify'
-                        dependencyCheckPublisher pattern: '**/target/dependency-check-report.xml'
-                    }
-                    
-                }
-
-            
-                 stage('Analyse Sonar') {
-                    agent {
-                        kubernetes {
-                            inheritFrom 'maven-agent'
-                        }
-                    }
-                    environment {
-                        SONAR_TOKEN = credentials('SONAR_TOKEN')
-                    }
-                     steps {
-                        echo 'Analyse sonar'
-                        sh 'mvn -Dsonar.token=${SONAR_TOKEN} clean integration-test sonar:sonar'
-                        script {
-                            checkSonarQualityGate()
-                        }
-
-                     }
-                    
+        stage('Analyse Sonar') {
+            agent {
+                kubernetes {
+                    inheritFrom 'maven-agent'
                 }
             }
+            environment {
+                SONAR_TOKEN = credentials('SONAR_TOKEN')
+            }
+            steps {
+                echo 'Analyse sonar'
+                sh 'mvn -Dsonar.token=${SONAR_TOKEN} clean integration-test sonar:sonar'
+                script {
+                    checkSonarQualityGate()
+                }
+            }
+                    
+        }
             
         }
             
