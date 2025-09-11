@@ -1,4 +1,4 @@
 {
- "integrationURL": '/home/plb',
+ "integrationURL": '/var/jenkins_home/workspace/multimodule_sami',
  "dataCenters": ['Nancy','Strasbourg']
 }
