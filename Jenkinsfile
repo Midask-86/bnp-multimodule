@@ -4,23 +4,54 @@ pipeline {
         maven 'MAVEN3'
     }
     stages {
-
-        stage('Analyse Sonar') {
-            agent {
-                kubernetes {
-                    inheritFrom 'maven-agent'
-                }
-            }
+        stage('Compile et tests') {
+            agent any
             steps {
-                echo 'Analyse sonar'
-                withSonarQubeEnv('SONAR') {
-                    sh 'mvn -Dsonar.token=${SONAR_TOKEN} clean integration-test sonar:sonar'
-                    script {
-                        checkSonarQualityGate()
+                sh 'mvn -Dmaven.test.failure.ignore=true clean package'
+                dir('application/target') {
+                    stash includes: '*.jar', name: 'app'
+                }        
+            }
+            post {
+                // If Maven was able to run the tests, even if some of the test
+                // failed, record the test results and archive the jar file.
+                success {
+                    junit '**/target/surefire-reports/TEST-*.xml'
+                    archiveArtifacts '**/target/*.jar'
                     }
+            }
+             
+        }
+
+        stage('Analyse qualité et vulnérabilités') {
+            parallel {
+                stage('Vulnérabilités') {
+                    agent any
+                    steps {
+                        echo 'Tests de Vulnérabilités OWASP'
+                        sh 'mvn -Dnvd.api.key=311a727c-b9e3-4932-be4f-e3f2651de65c -DskipTests -Dformats=XML verify'
+                        dependencyCheckPublisher pattern: '**/target/dependency-check-report.xml'
+                    }
+                    
+                }
+
+                stage('Analyse Sonar') {
+                    agent {
+                        kubernetes {
+                            inheritFrom 'maven-agent'
+                        }
+                    }
+                    steps {
+                        echo 'Analyse sonar'
+                        withSonarQubeEnv('SONAR') {
+                            sh 'mvn -Dsonar.token=${SONAR_TOKEN} clean integration-test sonar:sonar'
+                            script {
+                                checkSonarQualityGate()
+                            }
+                        }
+                    }                           
                 }
             }
-                    
         }
             
         stage('Déploiement intégration') {
