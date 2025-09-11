@@ -56,13 +56,13 @@ pipeline {
             
         stage('Déploiement intégration') {
             agent none
-            //input {
-            //    message 'Dans quel Data Center, voulez-vous déployer l’artefact ?'
-            //    ok 'Déployer'
-                //parameters {
-                //    choice choices: ['Paris', 'Lille', 'Lyon'], name: 'DATACENTER'
-                //}
-            //}
+            input {
+                message 'Dans quel Data Center, voulez-vous déployer l’artefact ?'
+                ok 'Déployer'
+                parameters {
+                    choice choices: ['Paris', 'Lille', 'Lyon'], name: 'DATACENTER'
+                }
+            }
 
             steps {
                 echo "Déploiement intégration"
