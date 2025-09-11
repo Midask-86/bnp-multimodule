@@ -17,7 +17,7 @@ pipeline {
             }
             steps {
                 echo 'Analyse sonar'
-                sh 'mvn -Dsonar.token=${SONAR_TOKEN} clean integration-test sonar:sonar'
+                sh 'mvn -Dsonar.token=${SONAR_TOKEN} -Dsonar.url=${SONAR_URL} clean integration-test sonar:sonar'
                 script {
                     checkSonarQualityGate()
                 }
