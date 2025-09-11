@@ -13,10 +13,11 @@ pipeline {
             }
             steps {
                 echo 'Analyse sonar'
-                withSonarQubeEnv('SONAR')
-                sh 'mvn -Dsonar.token=${SONAR_TOKEN} clean integration-test sonar:sonar'
-                script {
-                    checkSonarQualityGate()
+                withSonarQubeEnv('SONAR') {
+                    sh 'mvn -Dsonar.token=${SONAR_TOKEN} clean integration-test sonar:sonar'
+                    script {
+                        checkSonarQualityGate()
+                    }
                 }
             }
                     
