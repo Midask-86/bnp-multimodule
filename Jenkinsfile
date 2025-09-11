@@ -38,7 +38,7 @@ pipeline {
                 stage('Analyse Sonar') {
                     agent {
                         kubernetes {
-                            inheritFrom 'maven-agent'
+                            yamlFile 'KubernetesPod.yaml'
                         }
                     }
                     steps {
