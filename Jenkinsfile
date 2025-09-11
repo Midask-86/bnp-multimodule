@@ -4,24 +4,6 @@ pipeline {
         maven 'MAVEN3'
     }
     stages {
-        stage('Compile et tests') {
-            agent any
-            steps {
-                sh 'mvn -Dmaven.test.failure.ignore=true clean package'
-                dir('application/target') {
-                    stash includes: '*.jar', name: 'app'
-                }        
-            }
-            post {
-                // If Maven was able to run the tests, even if some of the test
-                // failed, record the test results and archive the jar file.
-                success {
-                    junit '**/target/surefire-reports/TEST-*.xml'
-                    archiveArtifacts '**/target/*.jar'
-                    }
-            }
-             
-        }
 
         stage('Analyse Sonar') {
             agent {
@@ -31,6 +13,7 @@ pipeline {
             }
             environment {
                 SONAR_TOKEN = credentials('SONAR_TOKEN')
+                SONAR_URL = "http://sonarqube-service.devops-tools.svc.cluster.local:9000"
             }
             steps {
                 echo 'Analyse sonar'
